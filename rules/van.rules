@@ -1,0 +1,28 @@
+#alert tcp any any -> $HOME_NET 80 (msg: "detected attack"; sid: 11111; rev:2;)
+#alert tcp any any -> $HOME_NET 80 (msg:" co tan cong";)
+alert tcp any any -> $HOME_NET 80 (msg: "phat hien nhieu goi tin duoc gui den"; resp: rst_all; flow: to_server, established; classtype: DoS; sid: 100000; rev:2;)
+
+#alert tcp any any -> $HOME_NET 80 (msg: "phat hien dos"; resp: rst_all; flow: to_server,established;detection:track by_src, count 100, seconds 10; priority:1;classtype: attempted_dos; sid: 100001; rev:2;)
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Phat hien tan cong theo kieu DoS"; resp:rst_all;classtype: attempted_dos; flag:U+; detection_filter:track by_src,count 70,second 10;priority: 2; sid:100005; rev:2;)
+#alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"Phat hien tan cong DoS"classtype: attempted_dos; flow: to_server, established; dsize: >1032;resp: rst_all; sid: 100006; rev:2;priority:3;)
+#alert icmp any any -> $HOME_NET any (msg:"phat hien co goi tin icmp bat thuong gui den"; classtype:attempt_dos; resp: rst_all; flow: to_server, established; fragbits: D; sid:100008; rev:2;) 
+   
+   
+# using snort detect SYN-flood attack----- neu tao SYN-Flood tu 1 may toi 1 may
+#
+#alert tcp any any -> $HOME_NET 80 (flag:S; msg:"Possible TCP DoS"; flow:stateless; detection_filter:track by_src, count 70, second 10; sid: 100002; rev:2;)
+# using snort detect SYN-Flood attack ------- neu tao SYN-Flood tu nhieu may toi 1 may dich
+#
+#alert tcp any any -> $HOME_NET 80 (flags:S; msg:"Possible TCP DoS"; flow:stateless; detection_filter:track by_dst, count 70, second 10; sid:100002; rev:2;)
+##########
+# using snort detect http flood
+#
+#alert tcp any any ->$HOME_NET 80 (msg:"GET Request flood attempt"; flow: to_server,established; content:"GET"; nocase; http_method; detection_filter:track by_src,count 30,second 10; metada:service http; sid:100003; rev:2;)
+########
+## drop packet if using command line in kali linux : hping3 -1 --fast
+#
+#drop icmp any any -> $HOME_NET 80 (msg:"xoa cac goi tin tcmp";itype:8; detection:track by_src, count 50, second 10; sid: 100004; rev:2;)
+#
+#drop tcp any any -> $HOME_NET any (msg:"TCP DoS"; flow:established, to_server; flag: A; threshold: type threshold,track by_src,count 10, seconds 10; sid: 100004; rev:2;)
+
+
